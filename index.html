@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Viewport for iPhone-like preview -->
+  <meta name="viewport" content="width=375, initial-scale=1.0">
+  <title>Phone Container with Star Wars Crawl</title>
+  <style>
+    /*-----------------------------------*/
+    /*           Custom Variables        */
+    /*-----------------------------------*/
+    :root {
+      --logo-size: 300px;      /* Adjust to control the logo size */
+      --crawl-font-size: 35px;  /* Adjust to control crawl text size */
+    }
+
+    /*-----------------------------------*/
+    /*           Base & Reset            */
+    /*-----------------------------------*/
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+      font-family: Arial, sans-serif;
+    }
+    
+    /*-----------------------------------*/
+    /*       Phone Container Styles      */
+    /*-----------------------------------*/
+    .phone-container {
+      width: 375px;   
+      height: 667px;  
+      border: 10px solid #000;
+      border-radius: 40px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      overflow: hidden;
+      position: relative;
+      background: url('H:/App Building/Nurse Resource App/Images/stars-bg.jpg')
+                  no-repeat center var(--bg-top, top);
+      background-size: cover;
+    }
+    @media (max-width: 400px) {
+      .phone-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+    }
+    
+    /*-----------------------------------*/
+    /*            Fade Effect            */
+    /*-----------------------------------*/
+    .fade {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(0deg, transparent, black 125%);
+      z-index: 1;
+    }
+    
+    /*-----------------------------------*/
+    /*      Far Far Away Text            */
+    /*-----------------------------------*/
+    #far-far-away {
+      color: rgb(75, 213, 238);
+      font-family: "FranklinGothicBookRegular", sans-serif;
+      font-size: 25px;
+      line-height: 1.5;
+      position: absolute;
+      top: 50%;       
+      left: 50%;      
+      transform: translate(-50%, -50%);
+      opacity: 0;
+      /* Animation starts 3s after page load and runs for 11s */
+      -webkit-animation: fade-in-out 11s linear 3s forwards;
+      animation: fade-in-out 11s linear 3s forwards;
+    }
+    @-webkit-keyframes fade-in-out {
+      0%   { opacity: 0; }
+      16%  { opacity: 1; }
+      84%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    @keyframes fade-in-out {
+      0%   { opacity: 0; }
+      16%  { opacity: 1; }
+      84%  { opacity: 1; }
+      100% { opacity: 0; }
+    }
+    
+    /*-----------------------------------*/
+    /*         Star Wars Logo            */
+    /*-----------------------------------*/
+    #stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      perspective: 1000px;
+      perspective-origin: center center;
+    }
+    #stage img {
+      opacity: 0;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      width: var(--logo-size);
+      /* Logo animation: starts at 14s, runs for 11s (includes a ~3s pause phase) */
+      -webkit-animation: logo 11s linear 14s forwards;
+      animation: logo 11s linear 14s forwards;
+      -webkit-animation-timing-function: ease-in;
+    }
+    @-webkit-keyframes logo {
+      0%   { -webkit-transform: translate(-50%, -50%) translateZ(0); opacity: 0; }
+      0.1% { -webkit-transform: translate(-50%, -50%) translateZ(0); opacity: 1; }
+      27%  { -webkit-transform: translate(-50%, -50%) translateZ(0); opacity: 1; }
+      50%  { -webkit-transform: translate(-50%, -50%) translateZ(-50000px); opacity: 1; }
+      60%  { -webkit-transform: translate(-50%, -50%) translateZ(-60000px); opacity: 0; }
+      100% { -webkit-transform: translate(-50%, -50%) translateZ(-100000px); opacity: 0; }
+    }
+    @keyframes logo {
+      0%   { transform: translate(-50%, -50%) translateZ(0); opacity: 0; }
+      0.1% { transform: translate(-50%, -50%) translateZ(0); opacity: 1; }
+      27%  { transform: translate(-50%, -50%) translateZ(0); opacity: 1; }
+      50%  { transform: translate(-50%, -50%) translateZ(-50000px); opacity: 1; }
+      60%  { transform: translate(-50%, -50%) translateZ(-60000px); opacity: 0; }
+      100% { transform: translate(-50%, -50%) translateZ(-100000px); opacity: 0; }
+    }
+    
+    /*-----------------------------------*/
+    /* Define custom parameters for the crawl animation */
+    /*-----------------------------------*/
+    :root {
+      --crawl-start: 400%;     /* Starting offset: text begins below the container's bottom */
+      --crawl-end: -6000px;      /* Ending offset: adjust this to control how far up it scrolls */
+      --crawl-duration: 60s;     /* Total duration of the crawl animation */
+      --crawl-delay: 18s;        /* Delay before the crawl begins */
+    }
+    
+    /*-----------------------------------*/
+    /*         Star Wars Crawl           */
+    /*-----------------------------------*/
+    .star-wars {
+      /* Absolute positioning for manual vertical offset */
+      position: absolute;
+      top: -525px;
+ padding-top: 1450px;
+      /* Increase width to widen the scrolling text area */
+      width: 350%;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 800px;
+      color: #feda4a;
+      font-size: 500%;
+      font-weight: 600;
+      letter-spacing: 6px;
+      line-height: 150%;
+      perspective: 400px;
+      text-align: justify;
+      z-index: 2;
+    }
+    
+    .crawl {
+      position: relative;
+      top: 99999px;
+      transform-origin: 50% 100%;
+      /* Crawl starts after 25s from page load */
+      animation: crawl 18s linear 18s forwards;
+    }
+    
+    .crawl > .title {
+      font-size: 90%;
+      text-align: center;
+    }
+    
+    .crawl > .title h1 {
+      margin: 0 0 100px;
+      text-transform: uppercase;
+    }
+    
+   @keyframes crawl {
+  0% {
+    top: -100px;
+    transform: rotateX(20deg) translateZ(0);
+  }
+  100% {                 /* make the end point MUCH farther away */
+    top: -6000px;       /* ← increase this negative value        */
+    transform: rotateX(25deg) translateZ(-2500px);
+  }
+}
+  </style>
+</head>
+<body>
+  <div class="phone-container">
+    <!-- Far Far Away Text (Centered) -->
+    <p id="far-far-away">
+      Health Sciences North <br> in Sudbury, Ontario.... 
+    </p>
+    
+    <!-- Stage for Logo -->
+    <div id="stage">
+      <!-- Star Wars Logo (Centered within #stage) -->
+      <img src="https://s3.amazonaws.com/csstarwars/starwars-logo.png" alt="Star Wars" />
+      <!-- Fade Effect Overlay -->
+      <div class="fade"></div>
+    </div>
+    
+    <!-- Star Wars Crawl Section (Animated) -->
+    <section class="star-wars">
+      <div class="crawl" id="crawl">
+        <div class="title">
+          <p>Critical Care Services Ontario</p>
+          <h1>Regional Critical Care Education</h1>
+        </div>
+        <p>It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire.</p>
+        <p>During the battle, Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the DEATH STAR, an armored space station with enough power to destroy an entire planet.</p>
+        <p>Pursued by the Empire’s sinister agents, Princess Leia races home aboard her starship, custodian of the stolen plans that can save her people and restore freedom to the galaxy….</p>
+      </div>
+    </section>
+  </div>
+  
+  <!-- Audio element for Star Wars sound -->
+  <audio id="star-wars-sound" src="H:/App Building/Nurse Resource App/Sounds/Star Wars.wav"></audio>
+  
+  <script>
+    // Function to play the audio.
+    function playAudio() {
+      var audio = document.getElementById('star-wars-sound');
+      audio.play().catch(function(error) {
+        console.log("Audio playback failed:", error);
+      });
+      // Remove click listener once audio is started.
+      document.removeEventListener('click', playAudio);
+    }
+    
+    // Listen for the logo's animationstart event, then play audio.
+    document.querySelector("#stage img").addEventListener("animationstart", function() {
+      playAudio();
+    });
+    
+    // Fallback: also allow a click on the document to start the audio.
+    document.addEventListener("click", playAudio);
+  </script>
+</body>
+</html>
