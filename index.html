@@ -161,50 +161,77 @@
     </div>
   </div>
 
-  <audio id="star-wars-sound" preload="auto" playsinline>
+  <!-- ===== Audio ===== -->
+<audio id="star-wars-sound" preload="auto" playsinline>
   <source src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Sounds/Star%20Wars.mp3?v=1" type="audio/mpeg" />
 </audio>
 
-  <!-- ===== Scripts ===== -->
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js?v=1"></script>
-  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js?v=2"></script>
-  <script>
-  function playAudio(){
-    const a=document.getElementById('star-wars-sound');
-    a.play().catch(e=>console.log('Audio failed',e));
-    document.removeEventListener('click',playAudio);
+<!-- ===== Scripts ===== -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js?v=1"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js?v=2"></script>
+<script>
+  function playAudio() {
+    const audio = document.getElementById('star-wars-sound');
+    if (audio) {
+      audio.play()
+        .then(() => console.log("✅ Audio played"))
+        .catch(e => console.warn("❌ Audio failed:", e));
+    }
+    document.removeEventListener('click', playAudio);
   }
-  document.querySelector('#stage img')
-          .addEventListener('animationstart',playAudio);
-  document.addEventListener('click',playAudio);
 
-  $(function(){
-    const $slider=$('#slider'),$well=$('#well');
+  // Attempt to auto-play when the animation starts
+  const logoImg = document.querySelector('#stage img');
+  if (logoImg) {
+    logoImg.addEventListener('animationstart', () => {
+      console.log("🎬 Animation started");
+      playAudio();
+    });
+  }
+
+  // Backup trigger for browsers that block auto-play until user gesture
+  document.addEventListener('click', playAudio);
+
+  // Slide-to-unlock drag logic
+  $(function () {
+    const $slider = $('#slider'),
+          $well = $('#well');
 
     $slider.draggable({
-      axis:'x',containment:'parent',
-      drag:(_,ui)=>{if(ui.position.left>($well.width()*0.55))$well.fadeOut();},
-      stop:(_,ui)=>{
-        if(ui.position.left<($well.width()*0.55))
-          $slider.animate({left:0});
+      axis: 'x',
+      containment: 'parent',
+      drag: (_, ui) => {
+        if (ui.position.left > ($well.width() * 0.55)) {
+          $well.fadeOut();
+        }
+      },
+      stop: (_, ui) => {
+        if (ui.position.left < ($well.width() * 0.55)) {
+          $slider.animate({ left: 0 });
+        }
       }
     });
 
-    const el=$slider[0];
-    el.addEventListener('touchmove',e=>{
+    // Touch support for mobile
+    const el = $slider[0];
+    el.addEventListener('touchmove', e => {
       e.preventDefault();
-      const t=e.touches[0];
-      const cur=t.pageX-el.offsetLeft-parseFloat(getComputedStyle(el).width)/2;
-      if(cur<=0)return;
-      if(cur>($well.width()*0.55))$well.fadeOut();
-      el.style.webkitTransform=`translateX(${cur}px)`;
-    },{passive:false});
-    el.addEventListener('touchend',()=>{
-      el.style.webkitTransition='-webkit-transform .3s ease-in';
-      el.addEventListener('webkitTransitionEnd',()=>el.style.webkitTransition='none',{once:true});
-      el.style.webkitTransform='translateX(0)';
+      const t = e.touches[0];
+      const cur = t.pageX - el.offsetLeft - parseFloat(getComputedStyle(el).width) / 2;
+      if (cur <= 0) return;
+      if (cur > ($well.width() * 0.55)) $well.fadeOut();
+      el.style.webkitTransform = `translateX(${cur}px)`;
+    }, { passive: false });
+
+    el.addEventListener('touchend', () => {
+      el.style.webkitTransition = '-webkit-transform .3s ease-in';
+      el.addEventListener('webkitTransitionEnd', () => {
+        el.style.webkitTransition = 'none';
+      }, { once: true });
+      el.style.webkitTransform = 'translateX(0)';
     });
   });
-  </script>
+</script>
+
 </body>
 </html>
