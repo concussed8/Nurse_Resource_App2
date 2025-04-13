@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=375, initial-scale=1.0">
+  <title>Phone Container with Curved Title & Carousel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #222;
+      font-family: Arial, sans-serif;
+    }
+
+    .phone-container {
+      width: 375px;
+      height: 667px;
+      border: 10px solid #000;
+      border-radius: 40px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+      position: relative;
+      overflow: hidden;
+      padding: 1rem;
+    }
+
+    .phone-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/HSN.jpg') no-repeat center center;
+  background-size: cover;
+  z-index: -1;
+  transition: filter 0.3s ease;
+  filter: blur(0);
+}
+
+
+    .phone-container.blurred::before {
+      filter: blur(2px);
+    }
+
+    @media (max-width: 400px) {
+      .phone-container {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+    }
+
+    svg.curved-title {
+      position: absolute;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 200000;
+    }
+
+    svg.curved-title text {
+      fill: #FF9800;
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 35px;
+    }
+
+    .plain-title {
+      position: absolute;
+      top: 20%;
+      left: 70%;
+      transform: translateX(-50%);
+      z-index: 200000;
+      font-family: 'Luckiest Guy', cursive;
+      font-size: 16px;
+      color: navy;
+      white-space: nowrap;
+    }
+
+    .carousel {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 85%;
+      gap: 2rem;
+      overflow-x: scroll;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel > li {
+      scroll-snap-align: center;
+      list-style: none;
+    }
+
+    .carousel-wrapper {
+      position: absolute;
+      top: 300px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110%;
+    }
+
+    .card-container {
+      width: 100%;
+      height: 250px;
+    }
+
+    .card-1, .card-2, .card-3, .card-4 {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      text-align: center;
+      border-radius: 10px;
+    }
+
+    .card-1 {
+      background: #f5f5f5;
+      color: #333;
+      border: 2px solid #ddd;
+    }
+
+    .card-2 {
+      background: #e0f7fa;
+      color: #006064;
+      border: 2px solid #4dd0e1;
+    }
+
+    .card-3 {
+      background: #fff9c4;
+      color: #f57f17;
+      border: 2px dashed #fbc02d;
+    }
+
+    .card-4 {
+      background: #f3e5f5;
+      color: #6a1b9a;
+      border: 2px dotted #ab47bc;
+    }
+
+    .card-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .carousel li small {
+      font-size: 0.6em;
+      color: #555;
+      margin-top: 0.5rem;
+    }
+
+    .carousel-indicators {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .carousel-indicators .dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: #888;
+      transition: background 0.3s;
+    }
+
+    .carousel-indicators .dot.active {
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone-container" id="phoneContainer">
+    <svg class="curved-title" viewBox="0 0 500 500" width="450" height="400">
+      <defs>
+        <path id="curve" d="M73.2,148.6c4-6.1,65.5-96.8,178.6-95.6c111.3,1.2,170.8,90.3,175.1,97" stroke="none" fill="none"/>
+      </defs>
+      <text><textPath href="#curve">REGIONAL CRITICAL</textPath></text>
+    </svg>
+
+    <h1 class="plain-title">CARE EDUCATION</h1>
+
+    <div class="carousel-wrapper">
+      <ul class="carousel" id="carousel">
+        <li class="card-container card-1"><a href="page1.html" class="card-link">Item 1<br><small>This is a sample description for item 1.</small></a></li>
+        <li class="card-container card-2"><a href="page2.html" class="card-link">Item 2<br><small>This is a sample description for item 2.</small></a></li>
+        <li class="card-container card-3"><a href="page3.html" class="card-link">Item 3<br><small>This is a sample description for item 3.</small></a></li>
+        <li class="card-container card-4"><a href="page4.html" class="card-link">Item 4<br><small>This is a sample description for item 4.</small></a></li>
+      </ul>
+      <div class="carousel-indicators" id="carouselIndicators"></div>
+    </div>
+  </div>
+
+  <script>
+    const phoneContainer = document.getElementById('phoneContainer');
+    const carousel = document.getElementById('carousel');
+    const indicators = document.getElementById('carouselIndicators');
+    const items = carousel.querySelectorAll('li');
+
+    let blurTimeout;
+
+    items.forEach((_, index) => {
+      const dot = document.createElement('div');
+      dot.classList.add('dot');
+      if (index === 0) dot.classList.add('active');
+      indicators.appendChild(dot);
+    });
+
+    carousel.addEventListener('scroll', () => {
+      phoneContainer.classList.add('blurred');
+      clearTimeout(blurTimeout);
+      blurTimeout = setTimeout(() => {
+        phoneContainer.classList.remove('blurred');
+      }, 500);
+
+      const scrollLeft = carousel.scrollLeft;
+      const itemWidth = items[0].offsetWidth + 32;
+      const index = Math.round(scrollLeft / itemWidth);
+
+      const dots = indicators.querySelectorAll('.dot');
+      dots.forEach(dot => dot.classList.remove('active'));
+      if (dots[index]) dots[index].classList.add('active');
+    });
+  </script>
+</body>
+</html>
