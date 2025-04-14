@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=375, initial-scale=1.0" />
   <title>Star Wars Intro • Slide‑to‑Unlock</title>
 
-  <!-- jQuery UI theme (needed for .draggable) -->
   <link rel="stylesheet"
         href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css?v=1" />
 
@@ -49,10 +48,16 @@
     white-space: nowrap;
     text-align:center;
     opacity:0; z-index:2;
-    animation:farFade 11s linear 3s forwards;
   }
-  @keyframes farFade{0%,100%{opacity:0}16%,84%{opacity:1}}
-
+  .rcce-logo {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    max-width: 200px;
+    z-index: 5;
+  }
   #stage{
     position:absolute;top:50%;left:50%;
     transform:translate(-50%,-50%);
@@ -64,15 +69,19 @@
     width:var(--logo-size);
     transform-origin:center;
     opacity:0;
-    animation:logo 11s ease-in 14s forwards;
   }
 
+  @keyframes farFade{0%,100%{opacity:0}16%,84%{opacity:1}}
   @keyframes logo{
     0%   {transform:translate(-50%,-50%) translateZ(0); opacity:0;}
     .1%  {transform:translate(-50%,-50%) translateZ(0); opacity:1;}
     37%  {transform:translate(-50%,-50%) translateZ(0); opacity:1;}
     70%  {transform:translate(-50%,-50%) translateZ(-50000px); opacity:1;}
     100% {transform:translate(-50%,-50%) translateZ(-100000px); opacity:0;}
+  }
+  @keyframes crawl{
+    0%{top:-100px;transform:rotateX(20deg) translateZ(0)}
+    100%{top:-6000px;transform:rotateX(25deg) translateZ(-2500px)}
   }
 
   .star-wars{
@@ -82,14 +91,10 @@
     letter-spacing:6px;line-height:150%;perspective:400px;
     text-align:justify;z-index:2;
   }
-  .crawl{position:relative;top:99999px;transform-origin:50% 100%;
-         animation:crawl 18s linear 18s forwards}
+  .crawl{position:relative;top:99999px;transform-origin:50% 100%;}
+
   .crawl>.title{font-size:90%;text-align:center}
   .crawl>.title h1{margin:0 0 100px;text-transform:uppercase}
-  @keyframes crawl{
-    0%{top:-100px;transform:rotateX(20deg) translateZ(0)}
-    100%{top:-6000px;transform:rotateX(25deg) translateZ(-2500px)}
-  }
 
   #well{
     width: var(--well-width);
@@ -105,11 +110,8 @@
     overflow: hidden;
     user-select: none;
     z-index: 3;
-    opacity: 0;
-    animation: wellIn 0.5s ease 25s forwards;
+    opacity: 1;
   }
-
-  @keyframes wellIn{ to{ opacity: 1; } }
 
   #well h2{
     display:flex;
@@ -130,19 +132,29 @@
              no-repeat center/contain;
     flex:0 0 auto;
     cursor:pointer;
+    position: relative;
+    z-index: 4;
   }
   </style>
 </head>
 <body>
+  
+   
   <div class="phone">
-    <p id="far">
-      Health Sciences North <br> in Sudbury, Ontario…
-    </p>
-
+    <p id="far">Health Sciences North <br> in Sudbury, Ontario…</p>
+ <!-- ✅ RCCE Logo visible on load, hides on intro -->
+    <img
+      src="https://github.com/concussed8/Nurse_Resource_App2/raw/main/Images/rcce_logo.png"
+      alt="RCCE Logo"
+      class="rcce-logo"
+      id="rcce_logo"
+    >
     <div id="stage">
-      <img src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/logo%20fade.png?v=1">
-      <div class="fade"></div>
-    </div>
+  <img id="logo" src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/rcce_logo.png">
+  <div class="fade"></div>
+</div>
+
+
 
     <section class="star-wars">
       <div class="crawl">
@@ -162,75 +174,72 @@
   </div>
 
   <!-- ===== Audio ===== -->
-  <button onclick="document.getElementById('star-wars-sound').play()">Play Audio</button>
+  <audio id="star-wars-sound" preload="auto" playsinline>
+    <source src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Sounds/Star%20Wars.mp3?v=4" type="audio/mpeg" />
+  </audio>
 
-<audio id="star-wars-sound" preload="auto" playsinline>
-  <source src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Sounds/Star%20Wars.mp3?v=4" type="audio/mpeg" />
-</audio>
-
-<!-- ===== Scripts ===== -->
+  <!-- ===== Scripts ===== -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js?v=1"></script>
 <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js?v=2"></script>
 <script>
-  function playAudio() {
+  let introStarted = false;
+
+  function startIntro() {
+    if (introStarted) return;
+    introStarted = true;
+
+    const logo = document.getElementById('logo');
+    const farText = document.getElementById('far');
+    const crawl = document.querySelector('.crawl');
     const audio = document.getElementById('star-wars-sound');
-    if (audio) {
-      audio.play()
-        .then(() => console.log("✅ Audio played"))
-        .catch(e => console.warn("❌ Audio failed:", e));
-    }
-    document.removeEventListener('click', playAudio);
+    const rcceLogo = document.getElementById('rcce_logo');
+
+    // 🔥 Hide the RCCE logo when the intro starts
+    rcceLogo.style.display = 'none';
+
+    // ✨ Start animations
+    farText.style.animation = 'farFade 4s linear 0s forwards';
+    logo.style.animation = 'logo 3s ease-in 5s forwards';
+    crawl.style.animation = 'crawl 15s linear 7s forwards';
+
+    // 🎵 Start and fade out audio
+    audio.volume = 1;
+    audio.play().catch(e => console.warn("❌ Audio failed:", e));
+    setTimeout(() => {
+      const fade = setInterval(() => {
+        if (audio.volume > 0.05) {
+          audio.volume -= 0.05;
+        } else {
+          audio.volume = 0;
+          clearInterval(fade);
+          audio.pause();
+
+          // ✅ Redirect after fade-out complete
+          window.location.href = "https://concussed8.github.io/Nurse_Resource_App2/Pages/Nurse_Resource_App%20-%20Copy.html";
+        }
+      }, 100);
+    }, 19000); // Start fading after 19 seconds
   }
 
-  // Attempt to auto-play when the animation starts
-  const logoImg = document.querySelector('#stage img');
-  if (logoImg) {
-    logoImg.addEventListener('animationstart', () => {
-      console.log("🎬 Animation started");
-      playAudio();
-    });
-  }
-
-  // Backup trigger for browsers that block auto-play until user gesture
-  document.addEventListener('click', playAudio);
-
-  // Slide-to-unlock drag logic
   $(function () {
-    const $slider = $('#slider'),
-          $well = $('#well');
+    const $slider = $('#slider');
+    const $well = $('#well');
 
     $slider.draggable({
       axis: 'x',
       containment: 'parent',
-      drag: (_, ui) => {
-        if (ui.position.left > ($well.width() * 0.55)) {
+      drag: function (_, ui) {
+        if (!introStarted && ui.position.left > ($well.width() * 0.55)) {
+          $slider.draggable('disable');
           $well.fadeOut();
+          startIntro();
         }
       },
-      stop: (_, ui) => {
-        if (ui.position.left < ($well.width() * 0.55)) {
+      stop: function (_, ui) {
+        if (!introStarted && ui.position.left < ($well.width() * 0.55)) {
           $slider.animate({ left: 0 });
         }
       }
-    });
-
-    // Touch support for mobile
-    const el = $slider[0];
-    el.addEventListener('touchmove', e => {
-      e.preventDefault();
-      const t = e.touches[0];
-      const cur = t.pageX - el.offsetLeft - parseFloat(getComputedStyle(el).width) / 2;
-      if (cur <= 0) return;
-      if (cur > ($well.width() * 0.55)) $well.fadeOut();
-      el.style.webkitTransform = `translateX(${cur}px)`;
-    }, { passive: false });
-
-    el.addEventListener('touchend', () => {
-      el.style.webkitTransition = '-webkit-transform .3s ease-in';
-      el.addEventListener('webkitTransitionEnd', () => {
-        el.style.webkitTransition = 'none';
-      }, { once: true });
-      el.style.webkitTransform = 'translateX(0)';
     });
   });
 </script>
