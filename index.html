@@ -2,247 +2,299 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=375, initial-scale=1.0" />
-  <title>Star Wars Intro • Slide‑to‑Unlock</title>
-
-  <link rel="stylesheet"
-        href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css?v=1" />
+  <!-- Prevent zooming on mobile -->
+  <meta name="viewport" content="width=375, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Star Wars Intro • Push to Unlock</title>
+  
+  <!-- Optional: jQuery UI CSS if needed elsewhere -->
+  <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css" />
 
   <style>
-  :root{
-    --logo-size:     300px;
-    --well-width:      80%;
-    --slider-w:  clamp(40px, 22vw, 80px);
-    --slider-h:  calc(var(--slider-w)*.65);
-    --unlock-fs: clamp(20px, 6vw, 18px);
-  }
-
-  *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-  body{
-    min-height:100vh;
-    display:flex;justify-content:center;align-items:center;
-    background:#222;font-family:Arial,Helvetica,sans-serif;
-  }
-
-  .phone{
-    width:375px;height:667px;
-    border:10px solid #000;border-radius:40px;
-    box-shadow:0 0 30px rgba(0,0,0,.5);
-    position:relative;overflow:hidden;
-    background:url('https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/stars-bg.jpg?v=1')
-              no-repeat center top/cover;
-  }
-  @media(max-width:400px){
-    .phone{width:100vw;height:100vh;border:none;border-radius:0}
-  }
-
-  .fade{position:absolute;inset:0;
-        background-image:linear-gradient(0deg,transparent,black 125%);
-        z-index:1}
-
-  #far{
-    position:absolute;
-    top:50%; left:50%; transform:translate(-50%,-50%);
-    font:20px/1.5 "FranklinGothicBookRegular",sans-serif;
-    color:rgb(75,213,238);
-    white-space: nowrap;
-    text-align:center;
-    opacity:0; z-index:2;
-  }
-  .rcce-logo {
-    position: absolute;
-    top: 35%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80%;
-    max-width: 200px;
-    z-index: 5;
-  }
-  #stage{
-    position:absolute;top:50%;left:50%;
-    transform:translate(-50%,-50%);
-    perspective:1000px;z-index:2;
-  }
-
-  #stage img{
-    position:absolute;top:50%;left:50%;
-    width:var(--logo-size);
-    transform-origin:center;
-    opacity:0;
-  }
-
-  @keyframes farFade{0%,100%{opacity:0}16%,84%{opacity:1}}
-  @keyframes logo{
-    0%   {transform:translate(-50%,-50%) translateZ(0); opacity:0;}
-    .1%  {transform:translate(-50%,-50%) translateZ(0); opacity:1;}
-    37%  {transform:translate(-50%,-50%) translateZ(0); opacity:1;}
-    70%  {transform:translate(-50%,-50%) translateZ(-50000px); opacity:1;}
-    100% {transform:translate(-50%,-50%) translateZ(-100000px); opacity:0;}
-  }
-  @keyframes crawl{
-    0%{top:-100px;transform:rotateX(20deg) translateZ(0)}
-    100%{top:-6000px;transform:rotateX(25deg) translateZ(-2500px)}
-  }
-
-  .star-wars{
-    position:absolute;top:-555px;padding-top:1450px;
-    width:350%;left:50%;transform:translateX(-50%);
-    height:800px;color:#feda4a;font-size:500%;font-weight:600;
-    letter-spacing:6px;line-height:150%;perspective:400px;
-    text-align:justify;z-index:2;
-  }
-  .crawl{position:relative;top:99999px;transform-origin:50% 100%;}
-
-  .crawl>.title{font-size:90%;text-align:center}
-  .crawl>.title h1{margin:0 0 100px;text-transform:uppercase}
-
-  #well{
-    width: var(--well-width);
-    max-width: 320px;
-    position: absolute;
-    bottom: 4vh;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 0.9rem 1.2rem 1.3rem;
-    border-radius: 30px;
-    background: linear-gradient(#010101 0%, #181818 100%);
-    border: 2px solid #454545;
-    overflow: hidden;
-    user-select: none;
-    z-index: 3;
-    opacity: 1;
-  }
-
-  #well h2{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font:300 var(--unlock-fs)/1 "Helvetica Neue",Helvetica,Arial,sans-serif;
-    white-space:nowrap;
-    background:linear-gradient(90deg,#4d4d4d 0%,#4d4d4d 40%,#fff 50%,#4d4d4d 60%,#4d4d4d 100%);
-    background-clip:text;-webkit-background-clip:text;color:transparent;
-    -webkit-text-fill-color:transparent;
-    animation:shine 5s linear infinite;
-  }
-  @keyframes shine{0%{background-position:-720px 0}100%{background-position:720px 0}}
-
-  #slider{
-    width:var(--slider-w);height:var(--slider-h);
-    background:url("https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/arrow.png?v=1")
-             no-repeat center/contain;
-    flex:0 0 auto;
-    cursor:pointer;
-    position: relative;
-    z-index: 4;
-  }
+    /* ===== Global Variables & Reset ===== */
+    :root {
+      --logo-size: 300px;
+      --unlock-fs: clamp(20px, 6vw, 18px);
+    }
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      /* We keep our dark background for the phone container */
+      font-family: Arial, Helvetica, sans-serif;
+      background: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    /* ===== Phone Container ===== */
+    .phone {
+      width: 375px;
+      height: 667px;
+      border: 10px solid #000;
+      border-radius: 40px;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+      background: url("https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/stars-bg.jpg?v=20250414")
+                  no-repeat center top/cover;
+    }
+    @media (max-width: 400px) {
+      .phone {
+        width: 100vw;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+      }
+    }
+    /* ===== Star Wars Intro Elements ===== */
+    #far {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font: 20px/1.5 "FranklinGothicBookRegular", sans-serif;
+      color: rgb(75, 213, 238);
+      text-align: center;
+      opacity: 0;
+      z-index: 2;
+    }
+    .rcce-logo {
+      position: absolute;
+      top: 35%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 200px;
+      z-index: 5;
+    }
+    /* ===== Stage for Logo Animation ===== */
+    #stage {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      perspective: 1000px;
+      z-index: 2;
+    }
+    #stage img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: var(--logo-size);
+      transform-origin: center;
+      opacity: 0;
+    }
+    .fade {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(0deg, transparent, black 125%);
+      z-index: 1;
+    }
+    /* ===== Star Wars Crawl ===== */
+    .star-wars {
+      position: absolute;
+      top: -555px;
+      padding-top: 1450px;
+      width: 350%;
+      left: 50%;
+      transform: translateX(-50%);
+      height: 800px;
+      color: #feda4a;
+      font-size: 500%;
+      font-weight: 600;
+      letter-spacing: 6px;
+      line-height: 150%;
+      perspective: 400px;
+      text-align: justify;
+      z-index: 2;
+    }
+    .crawl {
+      position: relative;
+      top: 99999px;
+      transform-origin: 50% 100%;
+    }
+    .crawl > .title {
+      font-size: 90%;
+      text-align: center;
+    }
+    .crawl > .title h1 {
+      margin: 0 0 100px;
+      text-transform: uppercase;
+    }
+    /* ===== Animations ===== */
+    @keyframes farFade {
+      0%, 100% { opacity: 0; }
+      16%, 84% { opacity: 1; }
+    }
+    @keyframes logo {
+      0%   { transform: translate(-50%, -50%) translateZ(0); opacity: 0; }
+      1%   { transform: translate(-50%, -50%) translateZ(0); opacity: 1; }
+      37%  { transform: translate(-50%, -50%) translateZ(0); opacity: 1; }
+      70%  { transform: translate(-50%, -50%) translateZ(-50000px); opacity: 1; }
+      100% { transform: translate(-50%, -50%) translateZ(-100000px); opacity: 0; }
+    }
+    @keyframes crawl {
+      0% { top: -100px; transform: rotateX(20deg) translateZ(0); }
+      100% { top: -6000px; transform: rotateX(25deg) translateZ(-2500px); }
+    }
+    /* ===== Replacement Button Styles ===== */
+    /* Container to position the button in the phone */
+    #unlockContainer {
+      position: absolute;
+      bottom: 4vh;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      /* Optional: adjust margin or padding as needed */
+    }
+    .button {
+      position: relative;
+      display: inline-block;
+      margin: 20px;
+    }
+    .button a {
+      color: white;
+      font-family: Helvetica, sans-serif;
+      font-weight: bold;
+      font-size: 36px;
+      text-align: center;
+      text-decoration: none;
+      background-color: #FFA12B;
+      display: block;
+      position: relative;
+      padding: 20px 40px;
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+      text-shadow: 0px 1px 0px #000;
+      filter: dropshadow(color=#000, offx=0px, offy=1px);
+      -webkit-box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+      -moz-box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+      box-shadow: inset 0 1px 0 #FFE5C4, 0 10px 0 #915100;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
+    .button a:active {
+      top: 10px;
+      background-color: #F78900;
+      -webkit-box-shadow: inset 0 1px 0 #FFE5C4, inset 0 -3px 0 #915100;
+      -moz-box-shadow: inset 0 1px 0 #FFE5C4, inset 0 -3pxpx 0 #915100;
+      box-shadow: inset 0 1px 0 #FFE5C4, inset 0 -3px 0 #915100;
+    }
+    .button:after {
+      content: "";
+      height: 100%;
+      width: 100%;
+      padding: 4px;
+      position: absolute;
+      bottom: -15px;
+      left: -4px;
+      z-index: -1;
+      background-color: #2B1800;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      border-radius: 5px;
+    }
   </style>
 </head>
 <body>
-  
-   
   <div class="phone">
+    <!-- "Far… far… far away" text -->
     <p id="far">Health Sciences North <br> in Sudbury, Ontario…</p>
- <!-- ✅ RCCE Logo visible on load, hides on intro -->
-    <img
-      src="https://github.com/concussed8/Nurse_Resource_App2/raw/main/Images/rcce_logo.png"
-      alt="RCCE Logo"
-      class="rcce-logo"
-      id="rcce_logo"
-    >
+    
+    <!-- RCCE Logo -->
+    <img src="https://github.com/concussed8/Nurse_Resource_App2/raw/main/Images/rcce_logo.png?v=20250414"
+         alt="RCCE Logo"
+         class="rcce-logo"
+         id="rcce_logo" />
+    
+    <!-- Stage for Logo Animation -->
     <div id="stage">
-  <img id="logo" src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/rcce_logo.png">
-  <div class="fade"></div>
-</div>
-
-
-
+      <img id="logo" src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Images/rcce_logo.png?v=20250414" alt="Logo Animation">
+      <div class="fade"></div>
+    </div>
+    
+    <!-- Star Wars Crawl -->
     <section class="star-wars">
       <div class="crawl">
         <div class="title">
           <p>Critical Care Services Ontario</p>
           <h1>Regional Critical Care Education</h1>
         </div>
-        <p>It is a period of civil war. Rebel spaceships, striking from a hidden base, have won their first victory against the evil Galactic Empire.</p>
-        <p>During the battle, Rebel spies managed to steal secret plans to the Empire’s ultimate weapon, the DEATH STAR, an armored space station with enough power to destroy an entire planet.</p>
-        <p>Pursued by the Empire’s sinister agents, Princess Leia races home aboard her starship, custodian of the stolen plans that can save her people and restore freedom to the galaxy….</p>
+        <p>Mitch Lapierre RN and Danny Raghunandan RRT are your Regional Critical Care Educators.  When we aren't saving the galaxy from evil, we are assiting with ICU education.</p>
+        <p>This app is packed with resources and tools for every situation. A handheld resource at your fingertips to assist you in your day to day activities.  </p>
+        <p>Please Enjoy!….</p>
       </div>
     </section>
-
-    <div id="well">
-      <h2><strong id="slider"></strong><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;slide to enter</span></h2>
+    
+    <!-- Replacement Button (using provided markup) -->
+    <div id="unlockContainer" ontouchstart="">
+      <div class="button">
+        <a href="#" id="unlockButton">ENTER</a>
+      </div>
     </div>
+    
   </div>
-
-  <!-- ===== Audio ===== -->
+  
+  <!-- Audio (Cache Busted) -->
   <audio id="star-wars-sound" preload="auto" playsinline>
-    <source src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Sounds/Star%20Wars.mp3?v=4" type="audio/mpeg" />
+    <source src="https://raw.githubusercontent.com/concussed8/Nurse_Resource_App2/main/Sounds/Star%20Wars.mp3?v=20250414" type="audio/mpeg">
   </audio>
-
-  <!-- ===== Scripts ===== -->
-<script src="https://code.jquery.com/jquery-3.7.1.min.js?v=1"></script>
-<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js?v=2"></script>
-<script>
-  let introStarted = false;
-
-  function startIntro() {
-    if (introStarted) return;
-    introStarted = true;
-
-    const logo = document.getElementById('logo');
-    const farText = document.getElementById('far');
-    const crawl = document.querySelector('.crawl');
-    const audio = document.getElementById('star-wars-sound');
-    const rcceLogo = document.getElementById('rcce_logo');
-
-    // 🔥 Hide the RCCE logo when the intro starts
-    rcceLogo.style.display = 'none';
-
-    // ✨ Start animations
-    farText.style.animation = 'farFade 4s linear 0s forwards';
-    logo.style.animation = 'logo 3s ease-in 5s forwards';
-    crawl.style.animation = 'crawl 15s linear 7s forwards';
-
-    // 🎵 Start and fade out audio
-    audio.volume = 1;
-    audio.play().catch(e => console.warn("❌ Audio failed:", e));
-    setTimeout(() => {
-      const fade = setInterval(() => {
-        if (audio.volume > 0.05) {
-          audio.volume -= 0.05;
-        } else {
-          audio.volume = 0;
-          clearInterval(fade);
-          audio.pause();
-
-          // ✅ Redirect after fade-out complete
-          window.location.href = "https://concussed8.github.io/Nurse_Resource_App2/Pages/Nurse_Resource_App%20-%20Copy.html";
-        }
-      }, 100);
-    }, 19000); // Start fading after 19 seconds
-  }
-
-  $(function () {
-    const $slider = $('#slider');
-    const $well = $('#well');
-
-    $slider.draggable({
-      axis: 'x',
-      containment: 'parent',
-      drag: function (_, ui) {
-        if (!introStarted && ui.position.left > ($well.width() * 0.55)) {
-          $slider.draggable('disable');
-          $well.fadeOut();
-          startIntro();
-        }
-      },
-      stop: function (_, ui) {
-        if (!introStarted && ui.position.left < ($well.width() * 0.55)) {
-          $slider.animate({ left: 0 });
-        }
-      }
+  
+  <!-- Scripts -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js?v=20250414"></script>
+  <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js?v=20250414"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js?v=20250414"></script>
+  <script>
+    let introStarted = false;
+    
+    function startIntro(){
+      if(introStarted) return;
+      introStarted = true;
+      
+      const logo     = document.getElementById("logo");
+      const farText  = document.getElementById("far");
+      const crawl    = document.querySelector(".crawl");
+      const audio    = document.getElementById("star-wars-sound");
+      const rcceLogo = document.getElementById("rcce_logo");
+      
+      // Hide the initial RCCE logo
+      rcceLogo.style.display = "none";
+      
+      // Start animations for "far..." text, logo, and crawl
+      farText.style.animation = "farFade 4s linear 0s forwards";
+      logo.style.animation    = "logo 3s ease-in 5s forwards";
+      crawl.style.animation   = "crawl 15s linear 7s forwards";
+      
+      // Start the audio at full volume
+      audio.volume = 1;
+      audio.play().catch(e => console.warn("Audio playback failed:", e));
+      
+      // Fade out audio after 19 seconds then redirect
+      setTimeout(() => {
+        const fadeInterval = setInterval(() => {
+          if (audio.volume > 0.05) {
+            audio.volume -= 0.05;
+          } else {
+            audio.volume = 0;
+            clearInterval(fadeInterval);
+            audio.pause();
+            window.location.href = "https://concussed8.github.io/Nurse_Resource_App2/Pages/Nurse_Resource_App%20-%20Copy.html";
+          }
+        }, 100);
+      }, 19000);
+    }
+    
+    // Bind click event to trigger the intro when the button is pressed
+    document.getElementById("unlockButton").addEventListener("click", function(e) {
+      e.preventDefault();
+      // Disable and hide the button immediately to prevent multiple triggers
+      this.disabled = true;
+      this.style.display = "none";
+      startIntro();
     });
-  });
-</script>
-
+  </script>
 </body>
 </html>
